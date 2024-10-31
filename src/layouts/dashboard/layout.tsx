@@ -55,23 +55,7 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
                 This is an info Alert.
               </Alert>
             ),
-            leftArea: (
-              <>
-                <MenuButton
-                  onClick={() => setNavOpen(true)}
-                  sx={{
-                    ml: -1,
-                    [theme.breakpoints.up(layoutQuery)]: { display: 'none' },
-                  }}
-                />
-                <NavMobile
-                  data={navData}
-                  open={navOpen}
-                  onClose={() => setNavOpen(false)}
-                  workspaces={_workspaces}
-                />
-              </>
-            ),
+            leftArea: <></>,
             rightArea: (
               <Box gap={1} display="flex" alignItems="center">
                 <Searchbar />

@@ -39,12 +39,11 @@ export function UserView() {
 
   const notFound = !dataFiltered.length && !!filterName;
 
-  const handleOpenDialog = () => setOpenDialog(true); // Open dialog
+  const handleOpenDialog = () => setOpenDialog(true);
   const handleCloseDialog = () => setOpenDialog(false);
 
   const handleAddComune = () => {
     if (newComuneName) {
-      console.log('New Comune:', newComuneName); // Placeholder for adding the new comune
       setNewComuneName('');
       handleCloseDialog();
     }
@@ -60,7 +59,7 @@ export function UserView() {
           variant="contained"
           color="inherit"
           startIcon={<Iconify icon="mingcute:add-line" />}
-          onClick={handleOpenDialog} // Open dialog on button click
+          onClick={handleOpenDialog}
         >
           Nuovo Comune
         </Button>

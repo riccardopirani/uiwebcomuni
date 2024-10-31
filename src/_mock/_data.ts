@@ -39,7 +39,7 @@ export const _users = [...Array(24)].map((_, index) => ({
     ][index] || 'UI Designer',
 }));
 
-export const _posts = [...Array(23)].map((_, index) => ({
+export const _posts = [...Array(2)].map((_, index) => ({
   id: _id(index),
   title: _postTitles(index),
   description: _description(index),

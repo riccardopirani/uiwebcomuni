@@ -18,8 +18,8 @@ import { PostSearch } from '../post-search';
 export function BlogView() {
   const [sortBy, setSortBy] = useState('latest');
 
-  const handleSort = useCallback((newSort: string) => {
-    setSortBy(newSort);
+  const handleSort = useCallback((Novitàort: string) => {
+    setSortBy(Novitàort);
   }, []);
 
   return (

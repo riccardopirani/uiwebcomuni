@@ -94,7 +94,7 @@ export function NotificationsPopover({ data = [], sx, ...other }: NotificationsP
           <Box sx={{ flexGrow: 1 }}>
             <Typography variant="subtitle1">Notifications</Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              You have {totalUnRead} unread messages
+              You have {totalUnRead} unread Comunicazioni
             </Typography>
           </Box>
 
