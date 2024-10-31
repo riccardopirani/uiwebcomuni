@@ -101,19 +101,10 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
           }}
         />
       }
-      /** **************************************
-       * Sidebar
-       *************************************** */
       sidebarSection={
         <NavDesktop data={navData} layoutQuery={layoutQuery} workspaces={_workspaces} />
       }
-      /** **************************************
-       * Footer
-       *************************************** */
       footerSection={null}
-      /** **************************************
-       * Style
-       *************************************** */
       cssVars={{
         '--layout-nav-vertical-width': '300px',
         '--layout-dashboard-content-pt': theme.spacing(1),

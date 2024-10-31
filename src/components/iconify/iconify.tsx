@@ -26,5 +26,4 @@ export const Iconify = forwardRef<SVGElement, IconifyProps>(
   )
 );
 
-// https://iconify.design/docs/iconify-icon/disable-cache.html
 disableCache('local');

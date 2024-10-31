@@ -28,6 +28,11 @@ const renderFallback = (
   </Box>
 );
 
+const isAuthenticated = () => {
+  const authStatus = localStorage.getItem('authVariable');
+  return authStatus && authStatus !== 'false';
+};
+
 export function Router() {
   return useRoutes([
     {
@@ -39,10 +44,18 @@ export function Router() {
         </DashboardLayout>
       ),
       children: [
-        { element: <HomePage />, index: true },
-        { path: 'user', element: <UserPage /> },
-        { path: 'products', element: <ProductsPage /> },
-        { path: 'blog', element: <BlogPage /> },
+        {
+          element: isAuthenticated() ? <HomePage /> : <Navigate to="/sign-in" replace />,
+          index: true,
+        },
+        {
+          path: 'user',
+          element: isAuthenticated() ? <UserPage /> : <Navigate to="/sign-in" replace />,
+        },
+        {
+          path: 'blog',
+          element: isAuthenticated() ? <BlogPage /> : <Navigate to="/sign-in" replace />,
+        },
       ],
     },
     {

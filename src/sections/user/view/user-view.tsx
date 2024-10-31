@@ -28,8 +28,8 @@ import type { UserProps } from '../user-table-row';
 export function UserView() {
   const table = useTable();
   const [filterName, setFilterName] = useState('');
-  const [openDialog, setOpenDialog] = useState(false); // State for dialog
-  const [newComuneName, setNewComuneName] = useState(''); // State for new comune name
+  const [openDialog, setOpenDialog] = useState(false);
+  const [newComuneName, setNewComuneName] = useState('');
 
   const dataFiltered: UserProps[] = applyFilter({
     inputData: _users,
@@ -40,7 +40,7 @@ export function UserView() {
   const notFound = !dataFiltered.length && !!filterName;
 
   const handleOpenDialog = () => setOpenDialog(true); // Open dialog
-  const handleCloseDialog = () => setOpenDialog(false); // Close dialog
+  const handleCloseDialog = () => setOpenDialog(false);
 
   const handleAddComune = () => {
     if (newComuneName) {
@@ -137,7 +137,6 @@ export function UserView() {
         />
       </Card>
 
-      {/* Dialog for new comune */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>Nome del Comune</DialogTitle>
         <DialogContent>

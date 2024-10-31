@@ -24,7 +24,7 @@ export function OverviewAnalyticsView() {
       <Grid container spacing={3}>
         <Grid xs={12} sm={6} md={3}>
           <AnalyticsWidgetSummary
-            title="Weekly sales"
+            title="Attivazioni"
             percent={2.6}
             total={714000}
             icon={<img alt="icon" src="/assets/icons/glass/ic-glass-bag.svg" />}
@@ -79,13 +79,11 @@ export function OverviewAnalyticsView() {
 
         <Grid xs={12} md={6} lg={4}>
           <AnalyticsCurrentVisits
-            title="Current visits"
+            title="Attivazione recenti"
             chart={{
               series: [
-                { label: 'America', value: 3500 },
-                { label: 'Asia', value: 2500 },
-                { label: 'Europe', value: 1500 },
-                { label: 'Africa', value: 500 },
+                { label: 'Comune di genova', value: 3500 },
+                { label: 'Comune di Napoli', value: 3500 },
               ],
             }}
           />
