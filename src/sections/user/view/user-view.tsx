@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
@@ -12,8 +12,6 @@ import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
-
-import { _users } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
@@ -30,9 +28,32 @@ export function UserView() {
   const [filterName, setFilterName] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
   const [newComuneName, setNewComuneName] = useState('');
+  const [comuni, setComuni] = useState<UserProps[]>([]);
+
+  const fetchComuni = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8989/sites', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setComuni(data);
+    } catch (error) {
+      console.error('Errore durante il caricamento dei comuni:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchComuni();
+  }, []);
 
   const dataFiltered: UserProps[] = applyFilter({
-    inputData: _users,
+    inputData: comuni,
     comparator: getComparator(table.order, table.orderBy),
     filterName,
   });
@@ -42,10 +63,68 @@ export function UserView() {
   const handleOpenDialog = () => setOpenDialog(true);
   const handleCloseDialog = () => setOpenDialog(false);
 
-  const handleAddComune = () => {
+  const handleAddComune = async () => {
     if (newComuneName) {
-      setNewComuneName('');
-      handleCloseDialog();
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      const raw = JSON.stringify({
+        name: newComuneName,
+      });
+
+      const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+      };
+
+      try {
+        const response = await fetch("http://127.0.0.1:8989/sites", requestOptions);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        console.log(result);
+
+        setComuni((prevComuni) => [
+          ...prevComuni,
+          { id: result.id, name: newComuneName, activationDate: result.activationDate, isVerified: true },
+        ]);
+
+        setNewComuneName('');
+        handleCloseDialog();
+      } catch (error) {
+        console.error('Errore durante la creazione del comune:', error);
+      }
+    }
+  };
+
+  const handleDeleteComuni = async () => {
+    try {
+      const deletePromises = table.selected.map(async (id) => {
+        const comuneToDelete = comuni.find(comune => comune.id === id);
+        if (comuneToDelete) {
+          const response = await fetch(`http://127.0.0.1:8989/sites/${comuneToDelete.id}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (!response.ok) {
+            throw new Error(`Failed to delete comune with id ${comuneToDelete.id}`);
+          }
+        }
+      });
+
+      await Promise.all(deletePromises);
+
+      // Update the state to remove the deleted comuni
+      setComuni((prevComuni) => prevComuni.filter(comune => !table.selected.includes(comune.id)));
+      
+      // Reset selected after deletion
+      table.onSelectAllRows(false, []);
+    } catch (error) {
+      console.error('Errore durante la cancellazione dei comuni:', error);
     }
   };
 
@@ -63,6 +142,17 @@ export function UserView() {
         >
           Nuovo Comune
         </Button>
+        {table.selected.length > 0 && (
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<Iconify icon="mingcute:delete-line" />}
+            onClick={handleDeleteComuni}
+            sx={{ ml: 2 }}
+          >
+            Elimina Comune
+          </Button>
+        )}
       </Box>
 
       <Card>
@@ -81,22 +171,18 @@ export function UserView() {
               <UserTableHead
                 order={table.order}
                 orderBy={table.orderBy}
-                rowCount={_users.length}
+                rowCount={comuni.length}
                 numSelected={table.selected.length}
                 onSort={table.onSort}
                 onSelectAllRows={(checked) =>
                   table.onSelectAllRows(
                     checked,
-                    _users.map((user) => user.id)
+                    comuni.map((comune) => comune.id)
                   )
                 }
                 headLabel={[
-                  { id: 'name', label: 'Name' },
-                  { id: 'company', label: 'Company' },
-                  { id: 'role', label: 'Role' },
-                  { id: 'isVerified', label: 'Verified', align: 'center' },
-                  { id: 'status', label: 'Status' },
-                  { id: '' },
+                  { id: 'name', label: 'Nome' },
+                  { id: 'activationDate', label: 'Data di Attivazione' },
                 ]}
               />
               <TableBody>
@@ -108,7 +194,12 @@ export function UserView() {
                   .map((row) => (
                     <UserTableRow
                       key={row.id}
-                      row={row}
+                      row={{
+                        id: row.id,
+                        name: row.name,
+                        activationDate: row.activationDate,
+                        isVerified: true
+                      }}
                       selected={table.selected.includes(row.id)}
                       onSelectRow={() => table.onSelectRow(row.id)}
                     />
@@ -116,7 +207,7 @@ export function UserView() {
 
                 <TableEmptyRows
                   height={68}
-                  emptyRows={emptyRows(table.page, table.rowsPerPage, _users.length)}
+                  emptyRows={emptyRows(table.page, table.rowsPerPage, comuni.length)}
                 />
 
                 {notFound && <TableNoData searchQuery={filterName} />}
@@ -128,7 +219,7 @@ export function UserView() {
         <TablePagination
           component="div"
           page={table.page}
-          count={_users.length}
+          count={comuni.length}
           rowsPerPage={table.rowsPerPage}
           onPageChange={table.onChangePage}
           rowsPerPageOptions={[5, 10, 25]}
